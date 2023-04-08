@@ -1,3 +1,6 @@
+use rnglib::{RNG, Language};
+use rand::Rng;
+
 struct People {
     id: Vec<usize>,
     names: Vec<String>,
@@ -32,8 +35,18 @@ impl People {
     }
 
     fn increase_ratings(&mut self){
-        self.offensive_rating.iter_mut().for_each(|x| *x +=10);
-        self.defensive_rating.iter_mut().for_each(|x| *x +=10);
+        self.offensive_rating.iter_mut().for_each(|x| *x +=1);
+        self.defensive_rating.iter_mut().for_each(|x| *x +=1);
+    }
+
+    fn add_random_player(&mut self){
+        let rng = RNG::new(&Language::Roman).unwrap();
+
+        self.id.push(self.id.len() + 1);
+        self.names.push(rng.generate_name());
+        self.ages.push(rand::thread_rng().gen_range(20..=40));
+        self.offensive_rating.push(rand::thread_rng().gen_range(1..=100));
+        self.defensive_rating.push(rand::thread_rng().gen_range(1..=100));
     }
 }
 
@@ -46,10 +59,16 @@ fn main() {
     league_players.say_hello(1);
     league_players.say_hello(0);
 
-    league_players.increase_ratings();
-    league_players.increase_ratings();
-    league_players.increase_ratings();
+    let mut n = 0;
+
+    while n < 1000 {
+        league_players.add_random_player();
+        league_players.increase_ratings();
+        n += 1;
+    }
+
 
     league_players.say_hello(0);
     league_players.say_hello(1);
+    league_players.say_hello(rand::thread_rng().gen_range(1..=1000));
 }
