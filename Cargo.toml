@@ -7,5 +7,7 @@ edition = "2021"
 
 [dependencies]
 bounded-integer = {version = "0.5.6", features = ["macro"]}
+sqlx = {version = "0.6.3", features = ["runtime-tokio-native-tls"]}
 rand = "0.8.5"
 random_name_generator = "0.3.4"
+tokio = "1.27.0"

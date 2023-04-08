@@ -1,5 +1,6 @@
 use rnglib::{RNG, Language};
 use rand::Rng;
+use 
 
 struct People {
     id: Vec<usize>,
@@ -11,7 +12,7 @@ struct People {
 
 impl People {
 
-    fn manual_new() -> People {
+    fn new() -> People {
         People { 
             id:vec![0],
             names: vec![String::from("Gusti")], 
@@ -54,21 +55,4 @@ impl People {
 
 fn main() {
     let mut league_players = People::manual_new();
-
-    league_players.add_person(String::from("Joel Embiid"), 29, 97, 99);
-    league_players.say_hello(1);
-    league_players.say_hello(0);
-
-    let mut n = 0;
-
-    while n < 1000 {
-        league_players.add_random_player();
-        league_players.increase_ratings();
-        n += 1;
-    }
-
-
-    league_players.say_hello(0);
-    league_players.say_hello(1);
-    league_players.say_hello(rand::thread_rng().gen_range(1..=1000));
 }
