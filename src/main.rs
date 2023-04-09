@@ -1,58 +1,29 @@
-use rnglib::{RNG, Language};
-use rand::Rng;
-use 
+use sqlx::{migrate::MigrateDatabase, Sqlite};
 
-struct People {
-    id: Vec<usize>,
-    names: Vec<String>,
-    ages: Vec<u32>,
-    offensive_rating: Vec<u32>,
-    defensive_rating: Vec<u32>
-}
+mod players;
 
-impl People {
+const DB_URL: &str = "sqlite://sqlite.db";
 
-    fn new() -> People {
-        People { 
-            id:vec![0],
-            names: vec![String::from("Gusti")], 
-            ages: vec![21], 
-            offensive_rating: vec![100], 
-            defensive_rating: vec![100]
+
+#[tokio::main]
+async fn main() {
+
+    if !Sqlite::database_exists(DB_URL).await.unwrap_or(false) {
+        println!("Creating database {}", DB_URL);
+
+        match Sqlite::create_database(DB_URL).await {
+            Ok(_) => println!("Create db Success"),
+            Err(error) => panic!("error: {}", error),
         }
+    } else {
+        println!("Database already exists");
     }
 
-    fn add_person(&mut self, name: String, age: u32, offensive_rating: u32, defensive_rating: u32) {
-        self.id.push(self.id.len() + 1);
-        self.names.push(name);
-        self.ages.push(age);
-        self.offensive_rating.push(offensive_rating);
-        self.defensive_rating.push(defensive_rating);
-    }
+    let mut league_players = players::People::new();
 
-    fn say_hello(&self, index: usize) {
-        println!("DOD EXAMPLE:: Hello, my name is {} and I am {} years old", self.names[index], self.ages[index]);
-        println!("My Offense is {} and my Defense is {}", self.offensive_rating[index], self.defensive_rating[index]);
-    }
+    league_players.add_random_player();
 
-    fn increase_ratings(&mut self){
-        self.offensive_rating.iter_mut().for_each(|x| *x +=1);
-        self.defensive_rating.iter_mut().for_each(|x| *x +=1);
-    }
+    league_players.increase_ratings();
 
-    fn add_random_player(&mut self){
-        let rng = RNG::new(&Language::Roman).unwrap();
-
-        self.id.push(self.id.len() + 1);
-        self.names.push(rng.generate_name());
-        self.ages.push(rand::thread_rng().gen_range(20..=40));
-        self.offensive_rating.push(rand::thread_rng().gen_range(1..=100));
-        self.defensive_rating.push(rand::thread_rng().gen_range(1..=100));
-    }
-}
-
-
-
-fn main() {
-    let mut league_players = People::manual_new();
+    league_players.say_hello(1);
 }
