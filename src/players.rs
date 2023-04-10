@@ -1,6 +1,8 @@
 use rnglib::{RNG, Language};
 use rand::Rng;
 
+
+#[derive(Debug)]
 pub struct People {
     id: Vec<usize>,
     names: Vec<String>,

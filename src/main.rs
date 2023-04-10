@@ -1,29 +1,44 @@
-use sqlx::{migrate::MigrateDatabase, Sqlite};
-
+use rusqlite::{Connection, Result};
 mod players;
 
-const DB_URL: &str = "sqlite://sqlite.db";
+fn main() {
 
-
-#[tokio::main]
-async fn main() {
-
-    if !Sqlite::database_exists(DB_URL).await.unwrap_or(false) {
-        println!("Creating database {}", DB_URL);
-
-        match Sqlite::create_database(DB_URL).await {
-            Ok(_) => println!("Create db Success"),
-            Err(error) => panic!("error: {}", error),
-        }
-    } else {
-        println!("Database already exists");
+    fn create_table(conn: &Connection){
+        match conn.execute(
+            "CREATE TABLE PLAYER (
+                id              INTEGER PRIMARY KEY,
+                name            TEXT NOT NULL,
+                age             INTEGER NOT NULL,
+                offense_rating  INTEGER NOT NULL, 
+                defense_rating  INTEGER NOT NULL
+            );",
+            (), //empty list of params.
+        ) {
+            Ok(created) => println!("{} Table Person was created", created),
+            Err(err) => println!("Table Creation Failed: {}", err),
+        };
     }
 
-    let mut league_players = players::People::new();
+    fn save_game() -> Result<()> {
+        let path = "./players.db";
+        let db = Connection::open(path)?;
 
-    league_players.add_random_player();
+        create_table(&db);
 
-    league_players.increase_ratings();
+        println!("{}", db.is_autocommit());
+        Ok(())
+    }
 
-    league_players.say_hello(1);
+    let mut all_players = players::People::new();
+
+    all_players.add_random_player();
+
+    println!("ALL PLAYERS: {:?}", all_players);
+
+    match save_game() {
+        Ok(saved) => println!("{:?} Saved Game", saved),
+        Err(err) => println!("Error in Saving Game {}", err),
+    }
+
+
 }
