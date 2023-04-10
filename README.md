@@ -6,6 +6,6 @@ Working on the player generation aspect including saving players to a SQLite db.
 ### Check-List
 - [x] Generate random players
 - [x] Add 10 to each player rating
-- [] Save Players to a Sqlite database
-- [] Load Players to struct
-- [] expand Player Development algo
+- [ ] Save Players to a Sqlite database
+- [ ] Load Players to struct
+- [ ] expand Player Development algo
